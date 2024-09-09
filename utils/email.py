@@ -1,4 +1,4 @@
-from emailutils import construir_email, receber_dados_envio, enviar_email_smtp
+from .emailutils import construir_email, receber_dados_envio, enviar_email_smtp
 
 def enviar_email(destinatario, assunto, corpo):
     dados = receber_dados_envio()

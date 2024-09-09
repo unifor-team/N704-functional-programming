@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 from query import CREATE_USERS_TABLE, INSERT_USERS_TABLE, SELECT_ALL_USERS, DELETE_USER
 
 from utils.email import enviar_email
+from utils.request import extrair_dados
 
 load_dotenv()
 
@@ -13,28 +14,24 @@ app = Flask(__name__)
 url = os.getenv("DATABASE_URL")
 connection = psycopg2.connect(url)
 
+if __name__ == '__main__':
+    app.run(debug=True)
+
 @app.route('/enviar_email', methods=['POST'])
 def api_enviar_email():
     data = request.get_json()
-    destinatario = data.get('destinatario')
-    assunto = data.get('assunto')
-    corpo = data.get('corpo')
-    
+    [destinatario, assunto, corpo] = extrair_dados(data, ["destinatario", "assunto", "corpo"])
+
     if not destinatario or not assunto or not corpo:
         return jsonify({'message': 'Dados insuficientes'}), 400
     
     enviar_email(destinatario, assunto, corpo)
     return jsonify({'message': 'E-mail enviado com sucesso!'}), 200
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.post('/user')
 def create_user():
     data = request.get_json()
-    name = data["name"]
-    email = data["email"]
-    password = data["password"]
+    [name, email, password] = extrair_dados(data, ["name", "email", "password"])
 
     if not name or not email or not password:
         return jsonify({'message': 'Nome, e-mail e senha são necessários!'}), 400

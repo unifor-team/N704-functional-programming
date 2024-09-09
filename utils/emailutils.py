@@ -24,6 +24,6 @@ def enviar_email_smtp(remetente, senha, msg):
 
 def receber_dados_envio():
     remetente = os.getenv('EMAIL_REMETENTE')
-    senha = 'okqiptypzmixqtqr'
+    senha = os.getenv('SENHA_REMETENTE')
     
     return {"remetente": remetente, "senha": senha}
