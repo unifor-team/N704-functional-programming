@@ -1,40 +1,17 @@
 import os
 import psycopg2
-import smtplib
+
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from query import CREATE_USERS_TABLE, INSERT_USERS_TABLE, SELECT_ALL_USERS, DELETE_USER
-import email.message
 
-
+from email import enviar_email
 
 load_dotenv()
 
 app = Flask(__name__)
 url = os.getenv("DATABASE_URL")
 connection = psycopg2.connect(url)
-
-def enviar_email(destinatario, assunto, corpo):
-    remetente = os.getenv('EMAIL_REMETENTE')
-    senha = 'okqiptypzmixqtqr'
-    
-    msg = email.message.Message()
-    msg['Subject'] = assunto
-    msg['From'] = remetente
-    msg['To'] = destinatario
-    msg.add_header('Content-Type', 'text/html')
-    msg.set_payload(corpo)
-    
-    try:
-        servidor = smtplib.SMTP('smtp.gmail.com', 587)
-        servidor.starttls()
-        servidor.login(remetente, senha)
-        servidor.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
-        servidor.quit()
-
-        print(f"E-mail enviado para {destinatario} com sucesso!")
-    except Exception as e:
-        print(f"Erro ao enviar o e-mail: {e}")
 
 @app.route('/enviar_email', methods=['POST'])
 def api_enviar_email():
