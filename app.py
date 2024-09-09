@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from query import CREATE_USERS_TABLE, INSERT_USERS_TABLE, SELECT_ALL_USERS, DELETE_USER
 
-from utils.email import enviar_email
+from utils.email import enviar_email, retornar_assunto_exclusao
 from utils.request import extrair_dados
+from utils.response import retornar_erro
 
 load_dotenv()
 
@@ -20,7 +21,8 @@ if __name__ == '__main__':
 @app.route('/enviar_email', methods=['POST'])
 def api_enviar_email():
     data = request.get_json()
-    [destinatario, assunto, corpo] = extrair_dados(data, ["destinatario", "assunto", "corpo"])
+    dados_email = extrair_dados(data, ["destinatario", "assunto", "corpo"])
+    destinatario, assunto, corpo = dados_email["destinatario"], dados_email["assunto"], dados_email["corpo"]
 
     if not destinatario or not assunto or not corpo:
         return jsonify({'message': 'Dados insuficientes'}), 400
@@ -31,7 +33,9 @@ def api_enviar_email():
 @app.post('/user')
 def create_user():
     data = request.get_json()
-    [name, email, password] = extrair_dados(data, ["name", "email", "password"])
+
+    dados_usuario = extrair_dados(data, ["destinatario", "assunto", "corpo"])
+    name, email, password = dados_usuario["name"], dados_usuario["email"], dados_usuario["password"]
 
     if not name or not email or not password:
         return jsonify({'message': 'Nome, e-mail e senha são necessários!'}), 400
@@ -54,16 +58,12 @@ def list_users():
         with connection.cursor() as cursor:
             cursor.execute(SELECT_ALL_USERS)
             users = cursor.fetchall()
-            print(users)
-            response = []
-            for user in users:
-                each_user = {
+            response = list(map(lambda user: {
                     "id": user[0],
                     "name": user[1],
                     "email": user[2],
                     "password": user[3]
-                }
-                response.append(each_user)
+                }, users))
     return response, 200 
 
 @app.delete('/user/<int:user_id>')
@@ -71,23 +71,25 @@ def delete_user(user_id):
     try:
         with connection:
             with connection.cursor() as cursor:
+                error_msg = 'Usuário não encontrado'
+                codigo_not_found = 404
                 
+                # REFATORAR A QUERY PARA DENTRO DO ARQUIVO QUERY.PY
                 cursor.execute("SELECT email FROM users WHERE id = %s", (user_id,))
                 result = cursor.fetchone()
                 
                 if result is None:
-                    return jsonify({'message': 'Usuário não encontrado'}), 404
+                    return retornar_erro(error_msg, codigo_not_found)
                 
                 email = result[0]
                 
                 
                 cursor.execute(DELETE_USER, (user_id,))
                 if cursor.rowcount == 0:
-                    return jsonify({'message': 'Usuário não encontrado'}), 404
+                    return retornar_erro(error_msg, codigo_not_found)
                 
                 
-                assunto = "Conta excluída"
-                corpo = f"Olá,\n\nSua conta com o ID {user_id} foi excluída com sucesso."
+                assunto, corpo = retornar_assunto_exclusao(user_id)
                 enviar_email(email, assunto, corpo)
                 
                 return jsonify({'message': f'Usuário com ID {user_id} excluído com sucesso!'}), 200
