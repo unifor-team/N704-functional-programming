@@ -3,3 +3,4 @@ python-dotenv
 psycopg2-binary
 secure-smtplib
 email-validator
+unit-testing
