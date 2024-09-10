@@ -1,4 +1,7 @@
 from flask import jsonify
 
-def retornar_erro(msg, codigo):
-  return jsonify({'message': msg}), codigo
+# closure
+def retornar_resposta():
+    def criar_json(msg: str, codigo: int):
+        return jsonify({'message': msg}), codigo
+    return criar_json

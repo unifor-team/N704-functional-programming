@@ -7,3 +7,5 @@ INSERT_USERS_TABLE = "INSERT INTO users (name, email, password) VALUES (%s, %s, 
 SELECT_ALL_USERS = "SELECT * FROM users"
 
 DELETE_USER = "DELETE FROM users WHERE id = %s"
+
+SELECT_EMAIL_BY_ID = "SELECT email FROM users WHERE id = %s"

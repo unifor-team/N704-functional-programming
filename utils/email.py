@@ -12,4 +12,8 @@ def retornar_assunto_exclusao(user_id):
     assunto = "Conta excluída"
     corpo = f"Olá,\n\nSua conta com o ID {user_id} foi excluída com sucesso."
     return criar_assunto_corpo(assunto, corpo)
-    
+
+def retornar_assunto_criacao():
+    assunto = "Conta criada com sucesso"
+    corpo = "Olá,\n\nSua conta foi criada com sucesso."
+    return criar_assunto_corpo(assunto, corpo)
