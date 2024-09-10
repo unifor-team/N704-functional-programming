@@ -56,8 +56,6 @@ app.config.from_pyfile('config.Development.cfg')
 
 #### cfg example
 
-```
-
 ##Flask settings
 DEBUG = True  # True/False
 TESTING = False
