@@ -13,6 +13,29 @@ Using Flask to build a Restful API Server.
 
 ## Installation
 
+Make the repository clone on your workspace
+
+```
+$ git clone https://github.com/unifor-team/N704-functional-programming.git
+```
+Then
+
+```
+$ cd N704-functional-programming
+```
+
+In directory, set .venv directory
+
+```
+$ python -m venv .venv
+```
+
+Enter on .venv directory
+
+```
+$ source .venv/bin/activate
+```
+
 Install with pip:
 
 ```
