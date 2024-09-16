@@ -36,4 +36,14 @@ def test_retornar_resposta_sem_mensagem():
     message = json.loads(message)
 
     assert code == codigo_esperado
-    assert message['message'] ==  mensagem_esperada      
+    assert message['message'] ==  mensagem_esperada
+
+def test_retornar_resposta_sem_code():
+    mensagem_esperada = "abc"
+    codigo_esperado = None  
+    resposta = retornar_resposta()
+    (message, code) = resposta(mensagem_esperada, codigo_esperado)
+    message = json.loads(message)
+    assert code == codigo_esperado
+    assert message['message'] ==  mensagem_esperada
+
